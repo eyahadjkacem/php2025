@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article</title>
+</head>
+<body>
+    <h2>Formulaire d'Article</h2>
+    <form action="../control/articlecontrol.php" method="get">
+        <label >Référence :</label>
+        <input type="text"  name="ref" ><br><br>
+        
+        <label for="libelle">Libellé :</label>
+        <input type="text"  name="lib" ><br><br>
+        
+        <label >Fournisseur :</label>
+        <select  name="four[]" multiple >
+            <option value="f1">Fournisseur 1</option>
+            <option value="f2">Fournisseur 2</option>
+            <option value="f3">Fournisseur 3</option>
+        </select><br><br>
+        
+        
+        
+        
+        <label for="prix">Prix :</label>
+        <input type="text"  name="prix" ><br><br>
+        
+        <label for="stock">Qt en stock :</label>
+        <input type="text"  name="qt" ><br><br>
+        
+        <button type="submit">Valider</button>
+    </form>
+</body>
+</html>
