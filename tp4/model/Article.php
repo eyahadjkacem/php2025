@@ -43,24 +43,19 @@ class Article {
 
     return $s; 
     }
-    public static function getAll(){
-        include_once ("Fournisseur.php");
-        $bdd=connexpdo();
-        $l=array();
-
-  
+    public static function getAll() {
+        include_once("Fournisseur.php");
+        $bdd = connexpdo();
+        $l = array();
+    
         $req = "SELECT * FROM article";
-        $sql=$bdd->query($req)or die($bdd->erroInfo()[2]);
-   
-        while($row=$sql->fetch(PDO::FETCH_BOTH)){
-            $f=Fournisseur::getbyArticle($row[0]);
-            $l[] = new Article($row[0], $row[1], $row[2], $row[3],$f);
+        $sql = $bdd->query($req) or die($bdd->errorInfo()[2]); // Correction de erroInfo() en errorInfo()
+    
+        while ($row = $sql->fetch(PDO::FETCH_BOTH)) {
+            $f = Fournisseur::getbyArticle($row[0]);
+            $l[] = new Article($row[0], $row[1], $row[2], $row[3], $f);
         }
         return $l;
-
-
-
-
     }
     public static function insert($art){}
     public static function update($art){}
@@ -82,17 +77,7 @@ class Article {
 
 
     }
-    $lesresultat=cnx->exec($rqtsql);
-    $listres=$lesresultat.fetchAll(pdo::fetch_num);
-    foreach($listres as $row){
-        foreach($row as $elem){
-            echo $elem
-        }
-    }
-
-
-
-
+    
 
 
 
