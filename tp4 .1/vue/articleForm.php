@@ -18,8 +18,7 @@
         <select  name="four[]" multiple >
            <?php 
             include_once ("../model/Fournisseur.php");
-            echo "hi";
-            echo "hi";
+        
            $l=Fournisseur::getAll();
            foreach ($l as $f) {
             echo $f;

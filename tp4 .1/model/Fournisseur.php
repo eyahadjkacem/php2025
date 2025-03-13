@@ -47,22 +47,33 @@ class Fournisseur {
             $tab[] = new Fournisseur($row['id'], $row['nom']);
         }
         
-        return $tab; // Correction de `return tab;`
+        return $tab; 
     }  
+
     public static function getfrbyrf($reff) {
         $tabfrart = array();
         $cnx = connexpdo();
         
-        // Correction du nom de la table (utilisation de `art-for` entre backticks)
-        $rqtprep = $cnx->prepare("SELECT id FROM `art-for` WHERE ref = :reff");
-        
-        // Correction du bindParam
+        $rqtprep = $cnx->prepare("SELECT f.id, f.nom FROM `art-for` a JOIN fournisseur f ON a.id = f.id WHERE a.ref = :reff");
         $rqtprep->bindParam(":reff", $reff, PDO::PARAM_STR);
-        
         $rqtprep->execute();
-        $res = $rqtprep->fetchAll(PDO::FETCH_NUM);
+    
         
-        $tousfour = Fournisseur::getAll();
+        $rqtprep->bindColumn("id", $id);
+        $rqtprep->bindColumn("nom", $nom);
+
+
+        while ($rqtprep->fetch(PDO::FETCH_BOUND)) {
+            $f = new Fournisseur($id, $nom);
+            $tabfrart[] = $f;
+        }
+    
+        return $tabfrart;
+        }
+
+
+        
+      /* $tousfour = Fournisseur::getAll();
     
         foreach ($res as $row) {
             foreach ($tousfour as $fr) {
@@ -73,11 +84,11 @@ class Fournisseur {
             }
         }
     
-        return $tabfrart; // Ajout du retour de la fonction
+        return $tabfrart; // Ajout du retour de la fonction*/
     }
     
 
 
-}
+
 
 ?>
