@@ -27,14 +27,15 @@ class Article {
 
     public function __isset($attr) {
         return isset($this->$attr);
-    }
+    }//recherche +cliquer sur fournisseur 
 
     public function __toString() {
         $s = "<tr><td>" . $this->libelle . "</td><td>" . $this->prix . "</td><td>" . $this->quatite . "</td><td><select multiple>";
         foreach ($this->fournisser as $f) {
             $s .= $f;
         }
-        $s .= "</select></td></tr>";
+        $s .= "</select></td>
+        <td><a href='../control/articleControl.php?del=supprimer&ref=".$this->reference."'>Supprimer</a></td><td><a href='../vue/articleForm.php?ref=".$this->reference."'>Edit</a></td></tr>";
         return $s;
     }
 
@@ -53,58 +54,66 @@ class Article {
         return $a;
     }
 
-    public function insert() {
+    public static function insert($art) {
         $cnx = connexpdo();
 
-        $rqtprep = $cnx->prepare("INSERT INTO article (ref, lib, prix, quantite) VALUES (:ref, :lib, :prix, :quantite)");
-        $rqtprep->bindParam(":ref", $this->reference, PDO::PARAM_STR);
-        $rqtprep->bindParam(":lib", $this->libelle, PDO::PARAM_STR);
-        $rqtprep->bindParam(":prix", $this->prix, PDO::PARAM_INT);
-        $rqtprep->bindParam(":quantite", $this->quatite, PDO::PARAM_INT);
+        $rqtprep = $cnx->prepare("INSERT INTO article (ref, lib, prix, quantite) VALUES (?, ?, ?, ?)");
+        $rqtprep->bindParam(1, $art->reference, PDO::PARAM_STR);
+        $rqtprep->bindParam(2, $art->libelle, PDO::PARAM_STR);
+        $rqtprep->bindParam(3, $art->prix, PDO::PARAM_INT);
+        $rqtprep->bindParam(4, $art->quatite, PDO::PARAM_INT);
 
         $rqtprep->execute();
-
-        foreach ($this->fournisser as $f) {
-            $rqtprep2 = $cnx->prepare("INSERT INTO `art-for` (ref, id) VALUES (:ref, :id)");
-            $rqtprep2->bindParam(":ref", $this->reference, PDO::PARAM_STR);
-            $rqtprep2->bindParam(":id", $f->id, PDO::PARAM_INT);
+        $rqtprep2 = $cnx->prepare("INSERT INTO `art-for` (ref, id) VALUES (:ref, :id)");
+        /* $rqtprep2 hors boucle car apres prepaation juste on change les paraametre n fois */
+        $rqtprep2->bindParam(":ref", $reff, PDO::PARAM_STR);
+        $rqtprep2->bindParam(":id", $idd, PDO::PARAM_INT);
+        foreach ($art->fournisser as $f) {
+            $reff=$art->reference;
+            $idd=$f->id;
+          
             $rqtprep2->execute();
         }
 
-        header("location:../vue/articleForm.php");
     }
 
-    public function update() {
+    public static function update($ref, $lib, $prix, $quatite, $frs) {
         $cnx = connexpdo();
+    
 
-        $rqtsql = $cnx->prepare("UPDATE article SET lib = :lib, prix = :prix, quantite = :quantite WHERE ref = :ref");
-        $rqtsql->bindParam(":lib", $this->libelle, PDO::PARAM_STR);
-        $rqtsql->bindParam(":prix", $this->prix, PDO::PARAM_INT);
-        $rqtsql->bindParam(":quantite", $this->quatite, PDO::PARAM_INT);
-        $rqtsql->bindParam(":ref", $this->reference, PDO::PARAM_STR);
-
+        $rqtsql = $cnx->prepare("UPDATE article SET lib = ?, prix = ?, quantite = ? WHERE ref = ?");
+        $rqtsql->bindParam(1, $lib, PDO::PARAM_STR);
+        $rqtsql->bindParam(2, $prix, PDO::PARAM_INT);
+        $rqtsql->bindParam(3, $quatite, PDO::PARAM_INT);
+        $rqtsql->bindParam(4, $ref, PDO::PARAM_STR);
         $rqtsql->execute();
-
-        $rqtsql2 = $cnx->prepare("UPDATE `art-for` SET fr = :frr WHERE ref = :reff");
-
-        foreach ($this->fournisser as $f) {
-            $rqtsql2->bindParam(":frr", $f->id, PDO::PARAM_INT);
-            $rqtsql2->bindParam(":reff", $this->reference, PDO::PARAM_STR);
-            $rqtsql2->execute();
+    
+        $rqtsql2 = $cnx->prepare("DELETE FROM `art-for` WHERE ref = ?");
+        $rqtsql2->bindParam(1, $ref, PDO::PARAM_STR);
+        $rqtsql2->execute();
+    
+        
+        $rqtsql3 = $cnx->prepare("INSERT INTO `art-for` (ref, id) VALUES (:ref, :id)");
+        $rqtsql3->bindParam(":ref", $ref, PDO::PARAM_STR);
+        $rqtsql3->bindParam(":id", $id, PDO::PARAM_INT);
+        foreach ($frs as $f) {
+            $id = $f->id;
+    
+           
+            $rqtsql3->execute();
         }
-
-        header("location:../vue/articleForm.php");
+        
     }
 
-    public function delete() {
+    public static function delete($ref) {
         $cnx = connexpdo();
-        $rqtsql = "DELETE FROM article WHERE ref = '" . $this->reference . "'";
+        $rqtsql = "DELETE FROM article WHERE ref = '" . $ref . "'";
         $cnx->exec($rqtsql);
 
-        $rqtsql2 = "DELETE FROM `art-for` WHERE ref = '" . $this->reference . "'";
+        $rqtsql2 = "DELETE FROM `art-for` WHERE ref = '" . $ref . "'";
         $cnx->exec($rqtsql2);
 
-        header("location:../vue/articleForm.php");
+      
     }
 }
 ?>

@@ -9,7 +9,7 @@
     <h2>Formulaire d'Article</h2>
     <form action="../control/articlecontrol.php" method="get">
         <label >Référence :</label>
-        <input type="text"  name="ref" ><br><br>
+        <input type="text"  name="ref" value=<?php if(isset($_GET['ref'])) echo $_GET['ref']; ?>><br>
         
         <label for="libelle">Libellé :</label>
         <input type="text"  name="lib" ><br><br>
@@ -42,7 +42,9 @@
         <label for="stock">Qt en stock :</label>
         <input type="text"  name="qt" ><br><br>
         
-        <button type="submit" >Valider</button>
+        <button type="submit" name="add">ajouter</button>
+        <button type="submit" name="up" >modifier</button>
+        <button type="submit" name="del">supprime</button>
            <table border=1>
            <tr><th>libelle</th><th>quantite</th><th>prix</th><th>fournissers</th></tr>
             <?php
