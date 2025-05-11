@@ -1,6 +1,8 @@
 <?php
 include("../model/Article.php");
 include("../model/Fournisseur.php");
+$tabart=Article::getAll();
+$l=Fournisseur::getAll();
 if(isset($_GET['add'])){
     if(isset($_GET['ref']) && isset($_GET['lib'])&& isset($_GET['prix'])&& isset($_GET['qt'])
 && isset($_GET['four'])){
@@ -44,44 +46,22 @@ else if(isset($_GET['up'])){
 
 }else if(isset($_GET['del'])){
     if(isset($_GET['ref'])){
-        Article::delete($_GET['ref']);
-
-    }
+        Article::delete($_GET['ref']);}
+else if(isset ($_GET['refsuplien']))   
+   {Article::delete($_GET['ref']);
+          } 
+}else if (isset($_GET['ch']) && isset($_GET['ref2'])) {
+    $tabart = Article::getprodlikeref($_GET['ref2']);
     
-}
+       
+    }
+  
 
 
 
 
 
+ 
+include_once("../vue/articleForm.php");
 
-
-
-
-
-
-
-
-header("location:../vue/articleForm.php");
-
-
-
-/*
-echo "<ul><li>reference:$ref</li><li>libelle:$lib</li> <li>prix:$prix</li><li>stock:$stock</li></ul>";
-
-echo "</ul> </li>" ;
-echo"<li>liste des fournisseur <ul>" ;
-foreach($fr as $f){
-    echo "<li> $f </li>" ;
-
-}
-echo "</ul> </li>" ;*/
-
-
-
-
-
-
-
-
-?>
+//header("location:../vue/articleForm.php");?>   

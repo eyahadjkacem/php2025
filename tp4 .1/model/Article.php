@@ -35,8 +35,16 @@ class Article {
             $s .= $f;
         }
         $s .= "</select></td>
-        <td><a href='../control/articleControl.php?del=supprimer&ref=".$this->reference."'>Supprimer</a></td><td><a href='../vue/articleForm.php?ref=".$this->reference."'>Edit</a></td></tr>";
-        return $s;
+        <td><a href='../control/articleControl.php?refsuplien=".$this->reference."'>Supprimer</a></td><td>
+       <a href='../vue/articleForm.php?ref=".$this->reference."&lib=".$this->libelle."&prix=".$this->prix."&qt=".$this->quatite;
+       foreach($this->fournisser as $f){
+        $s.="&".$f->id."=ok";
+
+
+       }
+        $s.="'>Edit</a></td></tr>";
+       
+       return $s;
     }
 
     public static function getAll() {
@@ -48,7 +56,7 @@ class Article {
 
         while ($row = $rqprep->fetch(PDO::FETCH_NUM)) {
             $tabfr = Fournisseur::getfrbyrf($row[0]);
-            $a[] = new Article($row[0], $row[1], $row[2], $row[3], $tabfr);
+            $a[] = new Article($row[0], $row[1], $row[2], $row[2], $tabfr);
         }
 
         return $a;
@@ -115,5 +123,43 @@ class Article {
 
       
     }
+    public static function getprodlikeref($rf) {
+        $cnx = connexpdo();
+        // Connexion à la base de données
+        $rqt = "SELECT * FROM article WHERE ref LIKE '%".$rf."%'"; 
+    
+        $lesres = $cnx->query($rqt); 
+        $art = []; // Initialisation du tableau
+        
+        while ($row = $lesres->fetch(PDO::FETCH_NUM)) { 
+            $f=Fournisseur::getfrbyrf($row[0]);
+            $a = new Article($row[0], $row[1], $row[3], $row[2],$f); // Correction du constructeur
+            $art[] = $a;
+        }
+    
+        return $art;
+    }
+
+    
+    public static function getprodlikelib($lib) {
+      
+    
+
+        $art = []; 
+
+        $cnx = connexpdo();
+        $rqprep = $cnx->prepare("SELECT * FROM article WHERE lib LIKE ?");
+        $rqprep->bindParam(1, "'%".$lib."%'", PDO::PARAM_STR);
+        $rqprep->execute();
+        
+        while ($row = $rqprep->fetch(PDO::FETCH_NUM)) { 
+            $f=Fournisseur::getfrbyrf($row[0]);
+            $a = new Article($row[0], $row[1], $row[3], $row[2],$f); 
+            $art[] = $a;
+        }
+    
+        return $art;
+    }
+    
 }
 ?>

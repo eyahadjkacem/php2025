@@ -6,7 +6,7 @@ function connexpdo(){
     $base = 'shop2025';
 
 
-$dsn="mysql:host=".MYHOST."; dbname=".$base; $user=MYUSER;$pass=MYPASS;
+    $dsn="mysql:host=".MYHOST."; dbname=".$base; $user=MYUSER;$pass=MYPASS;
 try{
 $idcom = new PDO($dsn,$user,$pass);
 return $idcom;
